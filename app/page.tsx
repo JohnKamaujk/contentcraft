@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { RocketIcon, SparklesIcon, TrendingUpIcon, ZapIcon } from "lucide-react";
+import { InstagramIcon, LinkedinIcon, RocketIcon, SparklesIcon, TrendingUpIcon, TwitterIcon, ZapIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -43,6 +43,50 @@ export default function Home() {
             >
               <Link href="#features">Learn More</Link>
             </Button>
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="py-20" id="features">
+          <h2 className="text-3xl font-bold mb-16 text-center text-white">
+            Supercharge Your Social Media Presence
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+            {[
+              {
+                title: "Twitter Threads",
+                icon: <TwitterIcon className="w-10 h-10 mb-4 text-blue-400" />,
+                description:
+                  "Generate compelling Twitter threads that engage your audience and boost your reach.",
+              },
+              {
+                title: "Instagram Captions",
+                icon: (
+                  <InstagramIcon className="w-10 h-10 mb-4 text-pink-400" />
+                ),
+                description:
+                  "Create catchy captions for your Instagram posts that increase engagement and followers.",
+              },
+              {
+                title: "LinkedIn Posts",
+                icon: <LinkedinIcon className="w-10 h-10 mb-4 text-blue-600" />,
+                description:
+                  "Craft professional content for your LinkedIn network to establish thought leadership.",
+              },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="p-8 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1"
+              >
+                <div className="flex flex-col items-center text-center">
+                  {feature.icon}
+                  <h3 className="text-2xl font-semibold mb-3 text-white">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300">{feature.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>
