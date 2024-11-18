@@ -1,3 +1,4 @@
+import { sendWelcomeEmail } from "../mailtrap";
 import { db } from "./dbConfig";
 import { Users, Subscriptions, GeneratedContent } from "./schema";
 import { eq, sql, and, desc } from "drizzle-orm";
@@ -43,6 +44,7 @@ export async function createOrUpdateUser(
         .returning()
         .execute();
       console.log("Updated user:", updatedUser);
+      sendWelcomeEmail(email, name);
       return updatedUser;
     }
 
@@ -52,6 +54,7 @@ export async function createOrUpdateUser(
       .returning()
       .execute();
     console.log("New user created:", newUser);
+    sendWelcomeEmail(email, name);
     return newUser;
   } catch (error) {
     console.error("Error creating or updating user:", error);
