@@ -10,7 +10,7 @@ const pricingPlans = [
   {
     name: "Basic",
     price: "9",
-    priceId: "",
+    priceId: "price_1QMx5EG7RPGkvgKxhllOrZCo",
     features: [
       "100 AI-generated posts per month",
       "Twitter thread generation",
@@ -20,7 +20,7 @@ const pricingPlans = [
   {
     name: "Pro",
     price: "29",
-    priceId: "",
+    priceId: "price_1QMx7TG7RPGkvgKxKTPE5j8f",
     features: [
       "500 AI-generated posts per month",
       "Twitter, Instagram, and LinkedIn content",
