@@ -119,7 +119,7 @@ export default function PricingPage() {
                 disabled={isLoading || !plan.priceId}
                 className="w-full bg-white text-black hover:bg-gray-200"
               >
-                Choose Plan
+                {isLoading ? "Processing..." : "Choose Plan"}
               </Button>
             </div>
           ))}
