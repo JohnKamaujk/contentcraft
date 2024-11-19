@@ -29,7 +29,7 @@ const pricingPlans = [
   },
   {
     name: "Enterprise",
-    price: "Custom",
+    price: "119",
     priceId: null,
     features: [
       "Unlimited AI-generated posts",
