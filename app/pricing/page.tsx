@@ -4,12 +4,13 @@ import { CheckIcon } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
 
 const pricingPlans = [
   {
     name: "Basic",
     price: "9",
-    priceId: "price_1PyFKGBibz3ZDixDAaJ3HO74",
+    priceId: "",
     features: [
       "100 AI-generated posts per month",
       "Twitter thread generation",
@@ -19,7 +20,7 @@ const pricingPlans = [
   {
     name: "Pro",
     price: "29",
-    priceId: "price_1PyFN0Bibz3ZDixDqm9eYL8W",
+    priceId: "",
     features: [
       "500 AI-generated posts per month",
       "Twitter, Instagram, and LinkedIn content",
@@ -29,7 +30,7 @@ const pricingPlans = [
   },
   {
     name: "Enterprise",
-    price: "119",
+    price: "Custom",
     priceId: null,
     features: [
       "Unlimited AI-generated posts",
@@ -43,6 +44,42 @@ const pricingPlans = [
 export default function PricingPage() {
   const { isSignedIn, user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (priceId: string) => {
+    if (!isSignedIn) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          priceId,
+          userId: user?.id,
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create checkout session");
+      }
+
+      const { sessionId } = await response.json();
+      const stripe = await loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+      );
+      if (!stripe) {
+        throw new Error("Failed to load Stripe");
+      }
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-gray-100">
@@ -77,7 +114,11 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full bg-white text-black hover:bg-gray-200">
+              <Button
+                onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
+                disabled={isLoading || !plan.priceId}
+                className="w-full bg-white text-black hover:bg-gray-200"
+              >
                 Choose Plan
               </Button>
             </div>
