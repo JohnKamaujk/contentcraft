@@ -124,3 +124,18 @@ export async function createOrUpdateSubscription(
     return null;
   }
 }
+
+export async function updateUserPoints(userId: string, points: number) {
+  try {
+    const [updatedUser] = await db
+      .update(Users)
+      .set({ points: sql`${Users.points} + ${points}` })
+      .where(eq(Users.stripeCustomerId, userId))
+      .returning()
+      .execute();
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating user points:", error);
+    return null;
+  }
+}
