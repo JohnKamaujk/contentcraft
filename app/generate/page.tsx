@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Navbar } from "@/components/Navbar";
-import { Clock } from "lucide-react";
+import { Clock, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function GenerateContent() {
   return (
@@ -26,6 +27,23 @@ export default function GenerateContent() {
               <Clock className="h-6 w-6 text-blue-400" />
             </div>
             <div className="space-y-4">{/**Generate history */}</div>
+          </div>
+        </div>
+
+        {/* Main content area */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Points display */}
+          <div className="bg-gray-800 p-6 rounded-2xl flex items-center justify-between">
+            <div className="flex items-center">
+              <Zap className="h-8 w-8 text-yellow-400 mr-3" />
+              <div>
+                <p className="text-sm text-gray-400">Available Points</p>
+                <p className="text-2xl font-bold text-yellow-400">0</p>
+              </div>
+            </div>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-full transition-colors">
+              <Link href="/pricing">Get More Points</Link>
+            </Button>
           </div>
         </div>
       </div>
