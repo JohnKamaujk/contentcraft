@@ -36,6 +36,99 @@ export default function GenerateContent() {
   const [userPoints, setUserPoints] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
+    const handleGenerate = async () => {
+      if (
+        !genAI ||
+        !user?.id ||
+        userPoints === null ||
+        userPoints < POINTS_PER_GENERATION
+      ) {
+        alert("Not enough points or API key not set.");
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+        let promptText = `Generate ${contentType} content about "${prompt}".`;
+        if (contentType === "twitter") {
+          promptText +=
+            " Provide a thread of 5 tweets, each under 280 characters.";
+        }
+
+        let imagePart: Part | null = null;
+        if (contentType === "instagram" && image) {
+          const reader = new FileReader();
+          const imageData = await new Promise<string>((resolve) => {
+            reader.onload = (e) => {
+              if (e.target && typeof e.target.result === "string") {
+                resolve(e.target.result);
+              } else {
+                resolve("");
+              }
+            };
+            reader.readAsDataURL(image);
+          });
+
+          const base64Data = imageData.split(",")[1];
+          if (base64Data) {
+            imagePart = {
+              inlineData: {
+                data: base64Data,
+                mimeType: image.type,
+              },
+            };
+          }
+          promptText +=
+            " Describe the image and incorporate it into the caption.";
+        }
+
+        const parts: (string | Part)[] = [promptText];
+        if (imagePart) parts.push(imagePart);
+
+        const result = await model.generateContent(parts);
+        const generatedText = result.response.text();
+
+        let content: string[];
+        if (contentType === "twitter") {
+          content = generatedText
+            .split("\n\n")
+            .filter((tweet) => tweet.trim() !== "");
+        } else {
+          content = [generatedText];
+        }
+
+        setGeneratedContent(content);
+
+        // Update points
+        const updatedUser = await updateUserPoints(
+          user.id,
+          -POINTS_PER_GENERATION
+        );
+        if (updatedUser) {
+          setUserPoints(updatedUser.points);
+        }
+
+        // Save generated content
+        const savedContent = await saveGeneratedContent(
+          user.id,
+          content.join("\n\n"),
+          prompt,
+          contentType
+        );
+
+        if (savedContent) {
+          setHistory((prevHistory) => [savedContent, ...prevHistory]);
+        }
+      } catch (error) {
+        console.error("Error generating content:", error);
+        setGeneratedContent(["An error occurred while generating content."]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setImage(event.target.files[0]);
