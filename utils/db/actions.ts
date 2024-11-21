@@ -139,3 +139,27 @@ export async function updateUserPoints(userId: string, points: number) {
     return null;
   }
 }
+
+export async function saveGeneratedContent(
+  userId: string,
+  content: string,
+  prompt: string,
+  contentType: string
+) {
+  try {
+    const [savedContent] = await db
+      .insert(GeneratedContent)
+      .values({
+        userId: sql`(SELECT id FROM ${Users} WHERE stripe_customer_id = ${userId})`,
+        content,
+        prompt,
+        contentType,
+      })
+      .returning()
+      .execute();
+    return savedContent;
+  } catch (error) {
+    console.error("Error saving generated content:", error);
+    return null;
+  }
+}
