@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Navbar } from "@/components/Navbar";
-import { Clock, Instagram, Linkedin, Twitter, Zap } from "lucide-react";
+import { Clock, Instagram, Linkedin, Twitter, Upload, Zap } from "lucide-react";
 import Link from "next/link";
 
 const contentTypes = [
@@ -23,6 +23,13 @@ const contentTypes = [
 export default function GenerateContent() {
   const [contentType, setContentType] = useState(contentTypes[0].value);
   const [prompt, setPrompt] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setImage(event.target.files[0]);
+    }
+  };
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black min-h-screen text-white">
@@ -112,6 +119,7 @@ export default function GenerateContent() {
                   <Input
                     type="file"
                     accept="image/*"
+                    onChange={handleImageUpload}
                     className="hidden"
                     id="image-upload"
                   />
@@ -119,8 +127,12 @@ export default function GenerateContent() {
                     htmlFor="image-upload"
                     className="cursor-pointer flex items-center justify-center px-4 py-2 bg-gray-700 rounded-xl text-sm font-medium hover:bg-gray-600 transition-colors"
                   >
+                    <Upload className="mr-2 h-5 w-5" />
                     <span>Upload Image</span>
                   </label>
+                  {image && (
+                    <span className="text-sm text-gray-400">{image.name}</span>
+                  )}
                 </div>
               </div>
             )}
