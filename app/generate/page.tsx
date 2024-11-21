@@ -11,8 +11,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Navbar } from "@/components/Navbar";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import { Clock, Instagram, Linkedin, Twitter, Upload, Zap } from "lucide-react";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 const contentTypes = [
   { value: "twitter", label: "Twitter Thread" },
@@ -20,9 +25,15 @@ const contentTypes = [
   { value: "linkedin", label: "LinkedIn Post" },
 ];
 
+const MAX_TWEET_LENGTH = 280;
+const POINTS_PER_GENERATION = 5;
+
 export default function GenerateContent() {
+  const { isLoaded, isSignedIn, user } = useUser();
+
   const [contentType, setContentType] = useState(contentTypes[0].value);
   const [prompt, setPrompt] = useState("");
+  const [userPoints, setUserPoints] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,7 +148,25 @@ export default function GenerateContent() {
               </div>
             )}
 
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition-colors"></Button>
+            <Button
+              onClick={handleGenerate}
+              disabled={
+                isLoading ||
+                !prompt ||
+                userPoints === null ||
+                userPoints < POINTS_PER_GENERATION
+              }
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition-colors"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                `Generate Content (${POINTS_PER_GENERATION} points)`
+              )}
+            </Button>
           </div>
         </div>
       </div>

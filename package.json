@@ -13,6 +13,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.3.4",
     "@clerk/themes": "^2.1.45",
+    "@google/generative-ai": "^0.21.0",
     "@neondatabase/serverless": "^0.10.3",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
