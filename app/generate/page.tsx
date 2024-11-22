@@ -24,7 +24,12 @@ import {
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { createOrUpdateUser, getUserPoints, saveGeneratedContent, updateUserPoints } from "@/utils/db/actions";
+import {
+  createOrUpdateUser,
+  getUserPoints,
+  saveGeneratedContent,
+  updateUserPoints,
+} from "@/utils/db/actions";
 
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
@@ -76,26 +81,33 @@ export default function GenerateContent() {
     }
   }, [isLoaded, isSignedIn, user, router]);
 
-    const fetchUserPoints = async () => {
-      if (user?.id) {
-        console.log("Fetching points for user:", user.id);
-        const points = await getUserPoints(user.id);
-        console.log("Fetched points:", points);
-        setUserPoints(points);
-        if (points === 0) {
-          console.log("User has 0 points. Attempting to create/update user.");
-          const updatedUser = await createOrUpdateUser(
-            user.id,
-            user.emailAddresses[0].emailAddress,
-            user.fullName || ""
-          );
-          console.log("Updated user:", updatedUser);
-          if (updatedUser) {
-            setUserPoints(updatedUser.points);
-          }
+  const fetchUserPoints = async () => {
+    if (user?.id) {
+      console.log("Fetching points for user:", user.id);
+      const points = await getUserPoints(user.id);
+      console.log("Fetched points:", points);
+      setUserPoints(points);
+      if (points === 0) {
+        console.log("User has 0 points. Attempting to create/update user.");
+        const updatedUser = await createOrUpdateUser(
+          user.id,
+          user.emailAddresses[0].emailAddress,
+          user.fullName || ""
+        );
+        console.log("Updated user:", updatedUser);
+        if (updatedUser) {
+          setUserPoints(updatedUser.points);
         }
       }
-    };
+    }
+  };
+  
+  const fetchContentHistory = async () => {
+    if (user?.id) {
+      const contentHistory = await getGeneratedContentHistory(user.id);
+      setHistory(contentHistory);
+    }
+  };
 
   const handleGenerate = async () => {
     if (
