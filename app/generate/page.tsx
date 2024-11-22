@@ -71,8 +71,31 @@ export default function GenerateContent() {
       router.push("/");
     } else if (isSignedIn && user) {
       console.log("User loaded:", user);
+      fetchUserPoints();
+      fetchContentHistory();
     }
   }, [isLoaded, isSignedIn, user, router]);
+
+    const fetchUserPoints = async () => {
+      if (user?.id) {
+        console.log("Fetching points for user:", user.id);
+        const points = await getUserPoints(user.id);
+        console.log("Fetched points:", points);
+        setUserPoints(points);
+        if (points === 0) {
+          console.log("User has 0 points. Attempting to create/update user.");
+          const updatedUser = await createOrUpdateUser(
+            user.id,
+            user.emailAddresses[0].emailAddress,
+            user.fullName || ""
+          );
+          console.log("Updated user:", updatedUser);
+          if (updatedUser) {
+            setUserPoints(updatedUser.points);
+          }
+        }
+      }
+    };
 
   const handleGenerate = async () => {
     if (
