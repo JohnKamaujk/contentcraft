@@ -22,7 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import {
   createOrUpdateUser,
@@ -102,7 +102,7 @@ export default function GenerateContent() {
       }
     }
   };
-  
+
   const fetchContentHistory = async () => {
     if (user?.id) {
       const contentHistory = await getGeneratedContentHistory(user.id);
@@ -202,6 +202,34 @@ export default function GenerateContent() {
       setIsLoading(false);
     }
   };
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0a0a0a]">
+        <div className="text-center bg-[#111111] p-8 rounded-lg shadow-lg">
+          <h1 className="text-3xl font-bold text-white mb-4">
+            Welcome to ContentCraft AI
+          </h1>
+          <p className="text-gray-400 mb-6">
+            To start generating amazing content, please sign in or create an
+            account.
+          </p>
+          <SignInButton mode="modal">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2">
+              Sign In / Sign Up
+            </Button>
+          </SignInButton>
+          <p className="text-gray-500 mt-4 text-sm">
+            By signing in, you agree to our Terms of Service and Privacy Policy.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
