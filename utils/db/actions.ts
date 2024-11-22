@@ -183,3 +183,33 @@ export async function getUserPoints(userId: string) {
     return 0;
   }
 }
+
+export async function getGeneratedContentHistory(
+  userId: string,
+  limit: number = 10
+) {
+  try {
+    const history = await db
+      .select({
+        id: GeneratedContent.id,
+        content: GeneratedContent.content,
+        prompt: GeneratedContent.prompt,
+        contentType: GeneratedContent.contentType,
+        createdAt: GeneratedContent.createdAt,
+      })
+      .from(GeneratedContent)
+      .where(
+        eq(
+          GeneratedContent.userId,
+          sql`(SELECT id FROM ${Users} WHERE stripe_customer_id = ${userId})`
+        )
+      )
+      .orderBy(desc(GeneratedContent.createdAt))
+      .limit(limit)
+      .execute();
+    return history;
+  } catch (error) {
+    console.error("Error fetching generated content history:", error);
+    return [];
+  }
+}
