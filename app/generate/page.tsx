@@ -12,7 +12,15 @@ import {
 } from "@/components/ui/select";
 import { Navbar } from "@/components/Navbar";
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
-import { Clock, Instagram, Linkedin, Loader2, Twitter, Upload, Zap } from "lucide-react";
+import {
+  Clock,
+  Instagram,
+  Linkedin,
+  Loader2,
+  Twitter,
+  Upload,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -51,6 +59,20 @@ export default function GenerateContent() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [selectedHistoryItem, setSelectedHistoryItem] =
     useState<HistoryItem | null>(null);
+
+  useEffect(() => {
+    if (!apiKey) {
+      console.error("Gemini API key is not set");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/");
+    } else if (isSignedIn && user) {
+      console.log("User loaded:", user);
+    }
+  }, [isLoaded, isSignedIn, user, router]);
 
   const handleGenerate = async () => {
     if (
