@@ -24,7 +24,7 @@ import {
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { saveGeneratedContent, updateUserPoints } from "@/utils/db/actions";
+import { createOrUpdateUser, getUserPoints, saveGeneratedContent, updateUserPoints } from "@/utils/db/actions";
 
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;

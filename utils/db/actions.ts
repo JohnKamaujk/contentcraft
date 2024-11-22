@@ -163,3 +163,23 @@ export async function saveGeneratedContent(
     return null;
   }
 }
+
+export async function getUserPoints(userId: string) {
+  try {
+    console.log("Fetching points for user:", userId);
+    const users = await db
+      .select({ points: Users.points, id: Users.id, email: Users.email })
+      .from(Users)
+      .where(eq(Users.stripeCustomerId, userId))
+      .execute();
+    console.log("Fetched users:", users);
+    if (users.length === 0) {
+      console.log("No user found with stripeCustomerId:", userId);
+      return 0;
+    }
+    return users[0].points || 0;
+  } catch (error) {
+    console.error("Error fetching user points:", error);
+    return 0;
+  }
+}
