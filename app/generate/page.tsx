@@ -10,29 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Navbar } from "@/components/Navbar";
-import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import {
-  Clock,
+  Loader2,
+  Upload,
   Copy,
+  Twitter,
   Instagram,
   Linkedin,
-  Loader2,
-  Twitter,
-  Upload,
+  Clock,
   Zap,
 } from "lucide-react";
-import Link from "next/link";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import ReactMarkdown from "react-markdown";
+import { Navbar } from "@/components/Navbar";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import {
-  createOrUpdateUser,
-  getGeneratedContentHistory,
   getUserPoints,
   saveGeneratedContent,
   updateUserPoints,
+  getGeneratedContentHistory,
+  createOrUpdateUser,
 } from "@/utils/db/actions";
+import { TwitterMock } from "@/components/social-mocks/TwitterMock";
+import { InstagramMock } from "@/components/social-mocks/InstagramMock";
+import { LinkedInMock } from "@/components/social-mocks/LinkedInMock";
+import Link from "next/link";
 
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
@@ -205,8 +208,34 @@ export default function GenerateContent() {
     }
   };
 
+  const handleHistoryItemClick = (item: HistoryItem) => {
+    setSelectedHistoryItem(item);
+    setContentType(item.contentType);
+    setPrompt(item.prompt);
+    setGeneratedContent(
+      item.contentType === "twitter"
+        ? item.content.split("\n\n")
+        : [item.content]
+    );
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const renderContentMock = () => {
+    if (generatedContent.length === 0) return null;
+
+    switch (contentType) {
+      case "twitter":
+        return <TwitterMock content={generatedContent} />;
+      case "instagram":
+        return <InstagramMock content={generatedContent[0]} />;
+      case "linkedin":
+        return <LinkedInMock content={generatedContent[0]} />;
+      default:
+        return null;
+    }
   };
 
   if (!isLoaded) {
@@ -218,7 +247,7 @@ export default function GenerateContent() {
       <div className="flex items-center justify-center min-h-screen bg-[#0a0a0a]">
         <div className="text-center bg-[#111111] p-8 rounded-lg shadow-lg">
           <h1 className="text-3xl font-bold text-white mb-4">
-            Welcome to ContentCraft AI
+            Welcome to ThreadCraft AI
           </h1>
           <p className="text-gray-400 mb-6">
             To start generating amazing content, please sign in or create an
@@ -254,165 +283,213 @@ export default function GenerateContent() {
               <h2 className="text-2xl font-semibold text-blue-400">History</h2>
               <Clock className="h-6 w-6 text-blue-400" />
             </div>
-            <div className="space-y-4">{/**Generate history */}</div>
+            <div className="space-y-4">
+              {history.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors cursor-pointer"
+                  onClick={() => handleHistoryItemClick(item)}
+                >
+                  <div className="flex items-center mb-2">
+                    {item.contentType === "twitter" && (
+                      <Twitter className="mr-2 h-5 w-5 text-blue-400" />
+                    )}
+                    {item.contentType === "instagram" && (
+                      <Instagram className="mr-2 h-5 w-5 text-pink-400" />
+                    )}
+                    {item.contentType === "linkedin" && (
+                      <Linkedin className="mr-2 h-5 w-5 text-blue-600" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {item.contentType}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-300 truncate">
+                    {item.prompt}
+                  </p>
+                  <div className="flex items-center text-xs text-gray-400 mt-2">
+                    <Clock className="mr-1 h-3 w-3" />
+                    {new Date(item.createdAt).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Main content area */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Points display */}
-          <div className="bg-gray-800 p-6 rounded-2xl flex items-center justify-between">
-            <div className="flex items-center">
-              <Zap className="h-8 w-8 text-yellow-400 mr-3" />
-              <div>
-                <p className="text-sm text-gray-400">Available Points</p>
-                <p className="text-2xl font-bold text-yellow-400">0</p>
+          {/* Main content area */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Points display */}
+            <div className="bg-gray-800 p-6 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center">
+                <Zap className="h-8 w-8 text-yellow-400 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-400">Available Points</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {userPoints !== null ? userPoints : "Loading..."}
+                  </p>
+                </div>
               </div>
-            </div>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-full transition-colors">
-              <Link href="/pricing">Get More Points</Link>
-            </Button>
-          </div>
-
-          {/* Content generation form */}
-          <div className="bg-gray-800 p-6 rounded-2xl space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">
-                Content Type
-              </label>
-              <Select onValueChange={setContentType} defaultValue={contentType}>
-                <SelectTrigger className="w-full bg-gray-700 border-none rounded-xl">
-                  <SelectValue placeholder="Select content type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {contentTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      <div className="flex items-center">
-                        {type.value === "twitter" && (
-                          <Twitter className="mr-2 h-4 w-4 text-blue-400" />
-                        )}
-                        {type.value === "instagram" && (
-                          <Instagram className="mr-2 h-4 w-4 text-pink-400" />
-                        )}
-                        {type.value === "linkedin" && (
-                          <Linkedin className="mr-2 h-4 w-4 text-blue-600" />
-                        )}
-                        {type.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-4 rounded-full transition-colors">
+                <Link href="/pricing">Get More Points</Link>
+              </Button>
             </div>
 
-            <div>
-              <label
-                htmlFor="prompt"
-                className="block text-sm font-medium mb-2 text-gray-300"
-              >
-                Prompt
-              </label>
-              <Textarea
-                id="prompt"
-                placeholder="Enter your prompt here..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                rows={4}
-                className="w-full bg-gray-700 border-none rounded-xl resize-none"
-              />
-            </div>
-
-            {contentType === "instagram" && (
+            {/* Content generation form */}
+            <div className="bg-gray-800 p-6 rounded-2xl space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-300">
-                  Upload Image
+                  Content Type
                 </label>
-                <div className="flex items-center space-x-3">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="cursor-pointer flex items-center justify-center px-4 py-2 bg-gray-700 rounded-xl text-sm font-medium hover:bg-gray-600 transition-colors"
-                  >
-                    <Upload className="mr-2 h-5 w-5" />
-                    <span>Upload Image</span>
+                <Select
+                  onValueChange={setContentType}
+                  defaultValue={contentType}
+                >
+                  <SelectTrigger className="w-full bg-gray-700 border-none rounded-xl">
+                    <SelectValue placeholder="Select content type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {contentTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        <div className="flex items-center">
+                          {type.value === "twitter" && (
+                            <Twitter className="mr-2 h-4 w-4 text-blue-400" />
+                          )}
+                          {type.value === "instagram" && (
+                            <Instagram className="mr-2 h-4 w-4 text-pink-400" />
+                          )}
+                          {type.value === "linkedin" && (
+                            <Linkedin className="mr-2 h-4 w-4 text-blue-600" />
+                          )}
+                          {type.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="prompt"
+                  className="block text-sm font-medium mb-2 text-gray-300"
+                >
+                  Prompt
+                </label>
+                <Textarea
+                  id="prompt"
+                  placeholder="Enter your prompt here..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  rows={4}
+                  className="w-full bg-gray-700 border-none rounded-xl resize-none"
+                />
+              </div>
+
+              {contentType === "instagram" && (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                    Upload Image
                   </label>
-                  {image && (
-                    <span className="text-sm text-gray-400">{image.name}</span>
-                  )}
+                  <div className="flex items-center space-x-3">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="cursor-pointer flex items-center justify-center px-4 py-2 bg-gray-700 rounded-xl text-sm font-medium hover:bg-gray-600 transition-colors"
+                    >
+                      <Upload className="mr-2 h-5 w-5" />
+                      <span>Upload Image</span>
+                    </label>
+                    {image && (
+                      <span className="text-sm text-gray-400">
+                        {image.name}
+                      </span>
+                    )}
+                  </div>
                 </div>
+              )}
+
+              <Button
+                onClick={handleGenerate}
+                disabled={
+                  isLoading ||
+                  !prompt ||
+                  userPoints === null ||
+                  userPoints < POINTS_PER_GENERATION
+                }
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition-colors"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  `Generate Content (${POINTS_PER_GENERATION} points)`
+                )}
+              </Button>
+            </div>
+
+            {/* Generated content display */}
+            {(selectedHistoryItem || generatedContent.length > 0) && (
+              <div className="bg-gray-800 p-6 rounded-2xl space-y-4">
+                <h2 className="text-2xl font-semibold text-blue-400">
+                  {selectedHistoryItem ? "History Item" : "Generated Content"}
+                </h2>
+                {contentType === "twitter" ? (
+                  <div className="space-y-4">
+                    {(selectedHistoryItem
+                      ? selectedHistoryItem.content.split("\n\n")
+                      : generatedContent
+                    ).map((tweet, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-700 p-4 rounded-xl relative"
+                      >
+                        <ReactMarkdown className="prose prose-invert max-w-none mb-2 text-sm">
+                          {tweet}
+                        </ReactMarkdown>
+                        <div className="flex justify-between items-center text-gray-400 text-xs mt-2">
+                          <span>
+                            {tweet.length}/{MAX_TWEET_LENGTH}
+                          </span>
+                          <Button
+                            onClick={() => copyToClipboard(tweet)}
+                            className="bg-gray-600 hover:bg-gray-500 text-white rounded-full p-2 transition-colors"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-gray-700 p-4 rounded-xl">
+                    <ReactMarkdown className="prose prose-invert max-w-none text-sm">
+                      {selectedHistoryItem
+                        ? selectedHistoryItem.content
+                        : generatedContent[0]}
+                    </ReactMarkdown>
+                  </div>
+                )}
               </div>
             )}
 
-            <Button
-              onClick={handleGenerate}
-              disabled={
-                isLoading ||
-                !prompt ||
-                userPoints === null ||
-                userPoints < POINTS_PER_GENERATION
-              }
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl transition-colors"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                `Generate Content (${POINTS_PER_GENERATION} points)`
-              )}
-            </Button>
+            {/* Content preview */}
+            {generatedContent.length > 0 && (
+              <div className="bg-gray-800 p-6 rounded-2xl">
+                <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                  Preview
+                </h2>
+                {renderContentMock()}
+              </div>
+            )}
           </div>
-          {/* Generated content display */}
-          {(selectedHistoryItem || generatedContent.length > 0) && (
-            <div className="bg-gray-800 p-6 rounded-2xl space-y-4">
-              <h2 className="text-2xl font-semibold text-blue-400">
-                {selectedHistoryItem ? "History Item" : "Generated Content"}
-              </h2>
-              {contentType === "twitter" ? (
-                <div className="space-y-4">
-                  {(selectedHistoryItem
-                    ? selectedHistoryItem.content.split("\n\n")
-                    : generatedContent
-                  ).map((tweet, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-700 p-4 rounded-xl relative"
-                    >
-                      <ReactMarkdown className="prose prose-invert max-w-none mb-2 text-sm">
-                        {tweet}
-                      </ReactMarkdown>
-                      <div className="flex justify-between items-center text-gray-400 text-xs mt-2">
-                        <span>
-                          {tweet.length}/{MAX_TWEET_LENGTH}
-                        </span>
-                        <Button
-                          onClick={() => copyToClipboard(tweet)}
-                          className="bg-gray-600 hover:bg-gray-500 text-white rounded-full p-2 transition-colors"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-gray-700 p-4 rounded-xl">
-                  <ReactMarkdown className="prose prose-invert max-w-none text-sm">
-                    {selectedHistoryItem
-                      ? selectedHistoryItem.content
-                      : generatedContent[0]}
-                  </ReactMarkdown>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>
