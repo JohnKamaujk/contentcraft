@@ -14,6 +14,7 @@ import { Navbar } from "@/components/Navbar";
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import {
   Clock,
+  Copy,
   Instagram,
   Linkedin,
   Loader2,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
 import {
   createOrUpdateUser,
@@ -203,6 +205,10 @@ export default function GenerateContent() {
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
@@ -363,6 +369,50 @@ export default function GenerateContent() {
               )}
             </Button>
           </div>
+          {/* Generated content display */}
+          {(selectedHistoryItem || generatedContent.length > 0) && (
+            <div className="bg-gray-800 p-6 rounded-2xl space-y-4">
+              <h2 className="text-2xl font-semibold text-blue-400">
+                {selectedHistoryItem ? "History Item" : "Generated Content"}
+              </h2>
+              {contentType === "twitter" ? (
+                <div className="space-y-4">
+                  {(selectedHistoryItem
+                    ? selectedHistoryItem.content.split("\n\n")
+                    : generatedContent
+                  ).map((tweet, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-700 p-4 rounded-xl relative"
+                    >
+                      <ReactMarkdown className="prose prose-invert max-w-none mb-2 text-sm">
+                        {tweet}
+                      </ReactMarkdown>
+                      <div className="flex justify-between items-center text-gray-400 text-xs mt-2">
+                        <span>
+                          {tweet.length}/{MAX_TWEET_LENGTH}
+                        </span>
+                        <Button
+                          onClick={() => copyToClipboard(tweet)}
+                          className="bg-gray-600 hover:bg-gray-500 text-white rounded-full p-2 transition-colors"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-gray-700 p-4 rounded-xl">
+                  <ReactMarkdown className="prose prose-invert max-w-none text-sm">
+                    {selectedHistoryItem
+                      ? selectedHistoryItem.content
+                      : generatedContent[0]}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
