@@ -27,11 +27,9 @@ This is a powerful SaaS platform designed to streamline content creation for X (
 
 Frameworks and tools that were used to develop ContentCraft.
 
-* [![Express][Express.js]][Express-url]
-* [![React][React.js]][React-url]
-* [![Javascript][Javascript.dev]][Javascript-url]
-* [![Mongo][Mongo.dev]][Mongo-url]
-* [![Material-UI][MaterialUI.com]][MaterialUI-url]
+* [![Next][Next.js]][Next-url]
+* [![Typescript][Typescript.dev]][Typescript-url]
+* [![Tailwind][Tailwind.com]][Tailwind-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -94,11 +92,11 @@ _Below is an example of how you can instruct your audience on installing and set
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Express.js]: https://img.shields.io/badge/Express.js-35495E?style=for-the-badge&logo=express&logoColor=4FC08D
-[Express-url]: https://expressjs.com/
-[Javascript.dev]: https://img.shields.io/badge/Javascript-DD0031?style=for-the-badge&logo=javascript&logoColor=white
-[Javascript-url]: https://www.javascript.com/
-[Mongo.dev]: https://img.shields.io/badge/Mongo-4A4A55?style=for-the-badge&logo=mongo&logoColor=FF3E00
-[Mongo-url]: https://mongo.dev/
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[Typescript.dev]: https://img.shields.io/badge/Typescript-DD0031?style=for-the-badge&logo=typescript&logoColor=white
+[Typescript-url]: https://www.typescriptlang.org/
+[Tailwind.com]: https://img.shields.io/badge/Tailwind-563D7C?style=for-the-badge&logo=tailwind&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
+
+
