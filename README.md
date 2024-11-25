@@ -11,15 +11,15 @@ This is a powerful SaaS platform designed to streamline content creation for X (
 
 
 # Features:
-### **User Authentication**: Implemented a robust and secure authentication system utilizing JWT and cookies to ensure safe login and registration processes.  
-### **User Dashboard**: A dynamic and interactive user dashboard for managing content, tracking activities, and personalizing settings.  
-### **User Activity History**: Users can access and view their historical data, including past interactions, content created, and engagement metrics, all through a seamless interface.  
-### **AI-Powered Chat**: Integrated AI chatbot for real-time user assistance, providing smart recommendations and answering queries to improve engagement and user satisfaction.  
-### **Responsive Design**: Fully responsive layout, leveraging Material UI (MUI) to ensure optimal performance and user experience across a wide range of devices and screen sizes.  
-### **shadcn UI Integration**: Utilized shadcn for a highly customizable, modern, and sleek UI design, ensuring consistency and smooth interaction.  
-### **Welcome Email Automation**: Automated welcome emails sent to new users using Mailtrap, providing a personalized introduction and onboarding information upon account creation.  
-### **Real-Time Data Updates**: Implemented real-time data sync across the platform, ensuring users always have the most up-to-date content and interaction status.  
-### **Content Generation**: Automated content generation tools for creating engaging posts and updates tailored for multiple social media platforms.  
+##### - **User Authentication**: Implemented a robust and secure authentication system utilizing JWT and cookies to ensure safe login and registration processes.  
+##### - **User Dashboard**: A dynamic and interactive user dashboard for managing content, tracking activities, and personalizing settings.  
+##### - **User Activity History**: Users can access and view their historical data, including past interactions, content created, and engagement metrics, all through a seamless interface.  
+##### - **AI-Powered Chat**: Integrated AI chatbot for real-time user assistance, providing smart recommendations and answering queries to improve engagement and user satisfaction.  
+##### - **Responsive Design**: Fully responsive layout, leveraging Material UI (MUI) to ensure optimal performance and user experience across a wide range of devices and screen sizes.  
+##### - **shadcn UI Integration**: Utilized shadcn for a highly customizable, modern, and sleek UI design, ensuring consistency and smooth interaction.  
+##### - **Welcome Email Automation**: Automated welcome emails sent to new users using Mailtrap, providing a personalized introduction and onboarding information upon account creation.  
+##### - **Real-Time Data Updates**: Implemented real-time data sync across the platform, ensuring users always have the most up-to-date content and interaction status.  
+##### - **Content Generation**: Automated content generation tools for creating engaging posts and updates tailored for multiple social media platforms.  
 
 
 ### Built With
