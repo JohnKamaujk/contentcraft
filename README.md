@@ -10,7 +10,7 @@ This is a powerful SaaS platform designed to streamline content creation for X (
 
 
 
-# Features:
+### Features:
 ##### - **User Authentication**: Implemented a robust and secure authentication system utilizing JWT and cookies to ensure safe login and registration processes.  
 ##### - **User Dashboard**: A dynamic and interactive user dashboard for managing content, tracking activities, and personalizing settings.  
 ##### - **User Activity History**: Users can access and view their historical data, including past interactions, content created, and engagement metrics, all through a seamless interface.  
