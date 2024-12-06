@@ -61,9 +61,9 @@ _Below is an example of how you can instruct your audience on installing and set
    ```sh
    https://github.com/JohnKamaujk/contentcraft.git
    ```
-2. cd into the frontend folder
+2. cd into the contentcraft folder
    ```sh
-   cd frontend/
+   cd contentcraft/
    ```
 3. Install NPM packages
    ```sh
@@ -71,25 +71,19 @@ _Below is an example of how you can instruct your audience on installing and set
    ```
 4. Create a dot env file inside the frontend folder and set up env variables
    ```sh
-    REACT_APP_API_URL(Deployed api-url) =
+      NEXT_PUBLIC_DATABASE_URL=
+      NEXT_PUBLIC_BASE_URL=
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+      CLERK_SECRET_KEY=
+      MAILTRAP_API_TOKEN=
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+      STRIPE_SECRET_KEY=
+      STRIPE_WEBHOOK_SECRET=
+      NEXT_PUBLIC_GEMINI_API_KEY=
    ```
-5. cd into the backend folder
-   ```sh
-   cd backend/
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Create a dot env file inside the backend folder and set up env variables
-   ```sh
-    PORT = 
-    ATLAS_URI = 
-    JWT_SECRET = 
-   ```
-5. Then run both the backend and frontend servers using
+5. Then run the project on your browser
     ```sh
-    npm start
+    npm run dev
     ```
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
