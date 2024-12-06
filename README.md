@@ -19,8 +19,7 @@ This is a powerful SaaS platform designed to streamline content creation for X (
 
 ##### - **User Authentication**: Implemented a robust and secure authentication system utilizing JWT and cookies to ensure safe login and registration processes.  
 ##### - **User Dashboard**: A dynamic and interactive user dashboard for managing content, tracking activities, and personalizing settings.  
-##### - **User Activity History**: Users can access and view their historical data, including past interactions, content created, and engagement metrics, all through a seamless interface.  
-##### - **AI-Powered Chat**: Integrated AI chatbot for real-time user assistance, providing smart recommendations and answering queries to improve engagement and user satisfaction.  
+##### - **User Activity History**: Users can access and view their historical data, including past interactions, content created, and engagement metrics, all through a seamless interface.    
 ##### - **Responsive Design**: Fully responsive layout, leveraging Material UI (MUI) to ensure optimal performance and user experience across a wide range of devices and screen sizes.  
 ##### - **shadcn UI Integration**: Utilized shadcn for a highly customizable, modern, and sleek UI design, ensuring consistency and smooth interaction.  
 ##### - **Welcome Email Automation**: Automated welcome emails sent to new users using Mailtrap, providing a personalized introduction and onboarding information upon account creation.  
