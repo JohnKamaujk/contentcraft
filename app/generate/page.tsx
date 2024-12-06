@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,23 +71,7 @@ export default function GenerateContent() {
   const [selectedHistoryItem, setSelectedHistoryItem] =
     useState<HistoryItem | null>(null);
 
-  useEffect(() => {
-    if (!apiKey) {
-      console.error("Gemini API key is not set");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/");
-    } else if (isSignedIn && user) {
-      console.log("User loaded:", user);
-      fetchUserPoints();
-      fetchContentHistory();
-    }
-  }, [isLoaded, isSignedIn, user, router]);
-
-  const fetchUserPoints = async () => {
+  const fetchUserPoints = useCallback(async () => {
     if (user?.id) {
       console.log("Fetching points for user:", user.id);
       const points = await getUserPoints(user.id);
@@ -106,14 +90,14 @@ export default function GenerateContent() {
         }
       }
     }
-  };
+  }, [user]);
 
-  const fetchContentHistory = async () => {
+  const fetchContentHistory = useCallback(async () => {
     if (user?.id) {
       const contentHistory = await getGeneratedContentHistory(user.id);
       setHistory(contentHistory);
     }
-  };
+  }, [user]);
 
   const handleGenerate = async () => {
     if (
@@ -237,6 +221,29 @@ export default function GenerateContent() {
         return null;
     }
   };
+
+  useEffect(() => {
+    if (!apiKey) {
+      console.error("Gemini API key is not set");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/");
+    } else if (isSignedIn && user) {
+      console.log("User loaded:", user);
+      fetchUserPoints();
+      fetchContentHistory();
+    }
+  }, [
+    isLoaded,
+    isSignedIn,
+    user,
+    router,
+    fetchContentHistory,
+    fetchUserPoints,
+  ]);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
