@@ -6,9 +6,9 @@ This is a powerful SaaS platform designed to streamline content creation for X (
 
 ![My Image](public/signin.png)
 
-![My Image](public/dashboard.png)
-
 ![My Image](public/generate.png)
+
+![My Image](public/dashboard.png)
 
 ![My Image](public/generated.png)
 
