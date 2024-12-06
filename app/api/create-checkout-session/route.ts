@@ -24,10 +24,20 @@ export async function POST(req: Request) {
       client_reference_id: userId,
     });
     return NextResponse.json({ sessionId: session.id });
-  } catch (error: any) {
-    console.error("Error creating checkout session:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error creating checkout session:", error);
+      return NextResponse.json(
+        { error: "Error creating checkout session", details: error.message },
+        { status: 500 }
+      );
+    }
+    console.error("Unexpected error:", error);
     return NextResponse.json(
-      { error: "Error creating checkout session", details: error.message },
+      {
+        error: "Error creating checkout session",
+        details: "An unexpected error occurred",
+      },
       { status: 500 }
     );
   }
