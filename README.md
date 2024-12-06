@@ -2,12 +2,17 @@
 This is a powerful SaaS platform designed to streamline content creation for X (formerly Twitter), LinkedIn, and Instagram. Using advanced AI technology, it generates high-quality, platform-specific posts, captions, and hashtags tailored to your audience. Whether you're an individual creator or a business, ContentCraft-AI ensures efficiency, consistency, and engagement by offering tools for customization, analytics, and scheduling, helping you maintain a compelling social media presence with ease. 
 
 
-![My Image]()
+![My Image](public/landing.png)
 
-![My Image]()
+![My Image](public/signin.png)
 
-![My Image]()
+![My Image](public/dashboard.png)
 
+![My Image](public/generate.png)
+
+![My Image](public/generated.png)
+
+![My Image](public/preview.png)
 
 
 ## Features:
