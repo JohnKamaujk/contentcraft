@@ -114,10 +114,17 @@ export async function POST(req: Request) {
       await updateUserPoints(userId, pointsToAdd);
 
       console.log(`Successfully processed subscription for user ${userId}`);
-    } catch (error: any) {
-      console.error("Error processing subscription:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error processing subscription:", error);
+        return NextResponse.json(
+          { error: "Error processing subscription", details: error.message },
+          { status: 500 }
+        );
+      }
+      console.error("Unknown error:", error);
       return NextResponse.json(
-        { error: "Error processing subscription", details: error.message },
+        { error: "Unknown error processing subscription" },
         { status: 500 }
       );
     }
