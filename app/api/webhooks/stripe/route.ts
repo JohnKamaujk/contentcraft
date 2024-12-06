@@ -25,10 +25,17 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(`Webhook signature verification failed: ${err.message}`);
+      return NextResponse.json(
+        { error: `Webhook Error: ${err.message}` },
+        { status: 400 }
+      );
+    }
+    console.error(`Unexpected error: ${err}`);
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: "Webhook Error: An unexpected error occurred" },
       { status: 400 }
     );
   }
